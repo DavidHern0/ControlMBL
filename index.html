@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control MBL</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .container {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .counter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 20px; /* Más espacio entre los elementos */
+    }
+
+    .counter span {
+      font-size: 18px;
+      color: #ffffff;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px; /* Botones más pequeños */
+      font-size: 14px; /* Tamaño de fuente más pequeño */
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #555;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    .count {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    @media (max-width: 600px) {
+      .counter span {
+        font-size: 16px;
+      }
+
+      button {
+        padding: 4px 8px; /* Ajustes para móviles */
+      }
+
+      .count {
+        font-size: 22px;
+      }
+    }
+
+    .counter-container {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Control MBL</h1>
+
+    <div class="counter-container">
+      <span>Micros mal colocados</span>
+      <div class="counter">
+        <button onclick="decreaseCount('micros')">-</button>
+        <span id="micros" class="count">0</span>
+        <button onclick="increaseCount('micros')">+</button>
+      </div>
+    </div>
+
+    <div class="counter-container">
+      <span>Botoneras encendidas</span>
+      <div class="counter">
+        <button onclick="decreaseCount('botoneras')">-</button>
+        <span id="botoneras" class="count">0</span>
+        <button onclick="increaseCount('botoneras')">+</button>
+      </div>
+    </div>
+
+    <div class="counter-container">
+      <span>Luces encendidas</span>
+      <div class="counter">
+        <button onclick="decreaseCount('luces')">-</button>
+        <span id="luces" class="count">0</span>
+        <button onclick="increaseCount('luces')">+</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getCurrentDate() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = ('0' + (today.getMonth() + 1)).slice(-2);
+      const day = ('0' + today.getDate()).slice(-2);
+      return `${year}-${month}-${day}`;
+    }
+
+    function loadCounters() {
+      const currentDate = getCurrentDate();
+      const savedData = localStorage.getItem(currentDate);
+
+      if (savedData) {
+        const counters = JSON.parse(savedData);
+        document.getElementById('micros').textContent = counters.micros;
+        document.getElementById('botoneras').textContent = counters.botoneras;
+        document.getElementById('luces').textContent = counters.luces;
+      }
+    }
+
+    function saveCounters() {
+      const currentDate = getCurrentDate();
+      const counters = {
+        micros: parseInt(document.getElementById('micros').textContent),
+        botoneras: parseInt(document.getElementById('botoneras').textContent),
+        luces: parseInt(document.getElementById('luces').textContent),
+      };
+
+      localStorage.setItem(currentDate, JSON.stringify(counters));
+    }
+
+    function increaseCount(id) {
+      const element = document.getElementById(id);
+      let count = parseInt(element.textContent);
+      element.textContent = count + 1;
+      saveCounters();
+    }
+
+    function decreaseCount(id) {
+      const element = document.getElementById(id);
+      let count = parseInt(element.textContent);
+      if (count > 0) {
+        element.textContent = count - 1;
+        saveCounters();
+      }
+    }
+
+    window.onload = loadCounters;
+  </script>
+
+</body>
+
+</html>
