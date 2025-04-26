@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control MBL</title>
+  <title>Contadores con Local Storage</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,13 +24,24 @@
       box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
       max-width: 400px;
       width: 100%;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      font-size: 24px;
-      color: #ffffff;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
       margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #555;
+      background-color: #222;
+      color: white;
+      text-align: center;
     }
 
     .counter {
@@ -38,12 +49,11 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      gap: 20px; /* Más espacio entre los elementos */
+      gap: 20px;
     }
 
     .counter span {
       font-size: 18px;
-      color: #ffffff;
     }
 
     button {
@@ -51,37 +61,18 @@
       color: white;
       border: none;
       border-radius: 5px;
-      padding: 5px 10px; /* Botones más pequeños */
-      font-size: 14px; /* Tamaño de fuente más pequeño */
+      padding: 5px 10px;
+      font-size: 14px;
       cursor: pointer;
     }
 
-    button:disabled {
-      background-color: #555;
-    }
-
-    button:hover:not(:disabled) {
+    button:hover {
       background-color: #0056b3;
     }
 
     .count {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
-      color: #ffffff;
-    }
-
-    @media (max-width: 600px) {
-      .counter span {
-        font-size: 16px;
-      }
-
-      button {
-        padding: 4px 8px; /* Ajustes para móviles */
-      }
-
-      .count {
-        font-size: 22px;
-      }
     }
 
     .counter-container {
@@ -96,7 +87,9 @@
 <body>
 
   <div class="container">
-    <h1>Control MBL</h1>
+    <h1>Control de Contadores</h1>
+    
+    <input type="date" id="datePicker" onchange="loadCounters()">
 
     <div class="counter-container">
       <span>Micros mal colocados</span>
@@ -129,52 +122,56 @@
   <script>
     function getCurrentDate() {
       const today = new Date();
-      const year = today.getFullYear();
-      const month = ('0' + (today.getMonth() + 1)).slice(-2);
-      const day = ('0' + today.getDate()).slice(-2);
-      return `${year}-${month}-${day}`;
+      return today.toISOString().split('T')[0]; 
     }
 
     function loadCounters() {
-      const currentDate = getCurrentDate();
-      const savedData = localStorage.getItem(currentDate);
+      const selectedDate = document.getElementById("datePicker").value;
+      const savedData = localStorage.getItem(selectedDate);
 
       if (savedData) {
         const counters = JSON.parse(savedData);
-        document.getElementById('micros').textContent = counters.micros;
-        document.getElementById('botoneras').textContent = counters.botoneras;
-        document.getElementById('luces').textContent = counters.luces;
+        document.getElementById("micros").textContent = counters.micros;
+        document.getElementById("botoneras").textContent = counters.botoneras;
+        document.getElementById("luces").textContent = counters.luces;
+      } else {
+        document.getElementById("micros").textContent = 0;
+        document.getElementById("botoneras").textContent = 0;
+        document.getElementById("luces").textContent = 0;
       }
     }
 
     function saveCounters() {
-      const currentDate = getCurrentDate();
+      const selectedDate = document.getElementById("datePicker").value;
+      if (!selectedDate) return;
+
       const counters = {
-        micros: parseInt(document.getElementById('micros').textContent),
-        botoneras: parseInt(document.getElementById('botoneras').textContent),
-        luces: parseInt(document.getElementById('luces').textContent),
+        micros: parseInt(document.getElementById("micros").textContent),
+        botoneras: parseInt(document.getElementById("botoneras").textContent),
+        luces: parseInt(document.getElementById("luces").textContent),
       };
 
-      localStorage.setItem(currentDate, JSON.stringify(counters));
+      localStorage.setItem(selectedDate, JSON.stringify(counters));
     }
 
     function increaseCount(id) {
       const element = document.getElementById(id);
-      let count = parseInt(element.textContent);
-      element.textContent = count + 1;
+      element.textContent = parseInt(element.textContent) + 1;
       saveCounters();
     }
 
     function decreaseCount(id) {
       const element = document.getElementById(id);
-      let count = parseInt(element.textContent);
-      if (count > 0) {
-        element.textContent = count - 1;
+      if (parseInt(element.textContent) > 0) {
+        element.textContent = parseInt(element.textContent) - 1;
         saveCounters();
       }
     }
 
-    window.onload = loadCounters;
+    window.onload = function () {
+      document.getElementById("datePicker").value = getCurrentDate();
+      loadCounters();
+    };
   </script>
 
 </body>
