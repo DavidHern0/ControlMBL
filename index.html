@@ -117,6 +117,15 @@
         <button onclick="increaseCount('luces')">+</button>
       </div>
     </div>
+
+    <div class="counter-container">
+      <span>Puertas abiertas</span>
+      <div class="counter">
+        <button onclick="decreaseCount('puertas')">-</button>
+        <span id="puertas" class="count">0</span>
+        <button onclick="increaseCount('puertas')">+</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -134,10 +143,12 @@
         document.getElementById("micros").textContent = counters.micros;
         document.getElementById("botoneras").textContent = counters.botoneras;
         document.getElementById("luces").textContent = counters.luces;
+        document.getElementById("puertas").textContent = counters.puertas;
       } else {
         document.getElementById("micros").textContent = 0;
         document.getElementById("botoneras").textContent = 0;
         document.getElementById("luces").textContent = 0;
+        document.getElementById("puertas").textContent = 0;
       }
     }
 
@@ -149,6 +160,7 @@
         micros: parseInt(document.getElementById("micros").textContent),
         botoneras: parseInt(document.getElementById("botoneras").textContent),
         luces: parseInt(document.getElementById("luces").textContent),
+        puertas: parseInt(document.getElementById("puertas").textContent),
       };
 
       localStorage.setItem(selectedDate, JSON.stringify(counters));
